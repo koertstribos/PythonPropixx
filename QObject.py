@@ -224,33 +224,3 @@ class QuadrifiableGrating(QuadrifiableStimulus):
     def SetColor(self, luminanceValue, object_):
         raise Exception('unimplemented')
 
-class QuadrifiableImage(QuadrifiableStimulus):
-    def __init__(self, window, oscillation = None, **kwargs):
-        if 'tex' in kwargs and len(kwargs['tex'].shape) == 3:
-            self._tex = kwargs['tex'].copy()
-            del(kwargs['tex'])
-
-        else:
-            raise Exception('tex not provided')
-
-        super().__init__(window=window, type_=psychopy.visual.ImageStim, oscillation=oscillation, **kwargs)
-
-    def AddLumValue(self, value):
-        tex = self.CreateTex(value)/ 2 + 0.5
-
-        for i in range(4):
-            obj = psychopy.visual.ImageStim(self.win, image=tex, **self.baseKwargs, colorSpace='rgb1')
-            obj.pos = self.poss[i]
-            self.lumObjs[i].append(obj)
-
-    def CreateTex(self, value): 
-        x_ = self._tex.shape[1]
-        y_ = self._tex.shape[0]
-
-        tex = np.ones((y_, x_, 3))
-        tex[:,:,:3] = (self._tex[:,:,:3] * value) + (self._tex[:,:,3:6] * (1-value))
-
-        return tex
-
-    def SetColor(self, luminanceValue, object_):
-        raise Exception('unimplemented')
